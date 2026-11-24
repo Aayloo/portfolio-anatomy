@@ -181,9 +181,9 @@ try {
           canvasHeight: Math.round(canvas.getBoundingClientRect().height),
           canvasHidden: canvas.hidden,
           fallbackHidden: fallback.hidden,
-          returnValue: document.querySelector("#kpi-return").textContent,
+          ytdValue: document.querySelector("#kpi-ytd").textContent,
           volatilityValue: document.querySelector("#kpi-vol").textContent,
-          stressValue: document.querySelector("#kpi-stress").textContent
+          windowValue: document.querySelector("#kpi-window").textContent
         };
       })()`,
     });
@@ -211,38 +211,38 @@ try {
         returnByValue: true,
         awaitPromise: true,
         expression: `(async () => {
-          document.querySelector('[data-view-mode="risk"]').click();
+          document.querySelector('[data-view-mode="returns"]').click();
+          for (const mode of ["drawdown", "volatility", "growth", "returns"]) {
+            document.querySelector('[data-view-mode="' + mode + '"]').click();
+            await new Promise((resolve) => setTimeout(resolve, 40));
+          }
           document.querySelector('[data-scenario="rates"]').click();
+          document.querySelector('[data-range="36"]').click();
           document.querySelector('[data-asset-id="VEA"]').click();
-          document.querySelector("#derisk-button").click();
-          document.querySelector("#explode-button").click();
-          document.querySelector("#isolate-button").click();
-          document.querySelector("#compare-button").click();
+          document.querySelector("#play-button").click();
           await new Promise((resolve) => setTimeout(resolve, 250));
           return {
             mode: document.querySelector("#view-title").textContent,
             selected: document.querySelector("#selected-name").textContent,
-            stress: document.querySelector("#kpi-stress").textContent,
-            deRisk: document.querySelector("#derisk-button").textContent,
-            explode: document.querySelector("#explode-button").getAttribute("aria-pressed"),
-            isolate: document.querySelector("#isolate-button").getAttribute("aria-pressed"),
-            compare: document.querySelector("#compare-button").getAttribute("aria-pressed"),
+            windowReturn: document.querySelector("#kpi-window").textContent,
+            rangePressed: document.querySelector('[data-range="36"]').getAttribute("aria-pressed"),
+            playing: document.querySelector("#play-button").textContent,
             weight: document.querySelector('[data-asset-id="VEA"] strong').textContent,
-            returnContribution: document.querySelector("#selected-return").textContent
+            latestReturn: document.querySelector("#selected-return-month").textContent
           };
         })()`,
       });
       const value = interaction.result.value;
-      if (!/variance/i.test(value.mode)) throw new Error(`Risk view did not activate: ${JSON.stringify(value)}`);
+      if (!/market gained/i.test(value.mode)) throw new Error(`Return view did not activate: ${JSON.stringify(value)}`);
       if (!/developed/i.test(value.selected)) throw new Error(`Asset selection did not update: ${JSON.stringify(value)}`);
-      if (!/^[−-]/.test(value.stress)) throw new Error(`Stress loss did not update: ${JSON.stringify(value)}`);
-      if (!/restore/i.test(value.deRisk)) throw new Error(`De-risk control did not update: ${JSON.stringify(value)}`);
-      if (value.explode !== "true") throw new Error(`Exploded view did not activate: ${JSON.stringify(value)}`);
-      if (value.isolate !== "true") throw new Error(`Isolation mode did not activate: ${JSON.stringify(value)}`);
-      if (value.compare !== "true") throw new Error(`Compare state did not activate: ${JSON.stringify(value)}`);
-      if (value.weight === "10.0%") throw new Error(`De-risk did not change the selected weight: ${JSON.stringify(value)}`);
-      if (!/^[+−-]/.test(value.returnContribution)) {
-        throw new Error(`Return attribution did not update: ${JSON.stringify(value)}`);
+      if (!/^[−-]/.test(value.windowReturn)) throw new Error(`Scenario return did not update: ${JSON.stringify(value)}`);
+      if (value.rangePressed !== "true") throw new Error(`Time window did not activate: ${JSON.stringify(value)}`);
+      if (!/pause/i.test(value.playing)) throw new Error(`History playback did not start: ${JSON.stringify(value)}`);
+      if (!/^[+−-]/.test(value.weight)) {
+        throw new Error(`Monthly return readout did not update: ${JSON.stringify(value)}`);
+      }
+      if (!/^[+−-]/.test(value.latestReturn)) {
+        throw new Error(`Selected asset return did not update: ${JSON.stringify(value)}`);
       }
     }
 

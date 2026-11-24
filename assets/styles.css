@@ -536,6 +536,51 @@ input[type="range"] {
   border-color: var(--accent);
 }
 
+.axis-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  justify-content: flex-end;
+  color: #7f8a89;
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.04em;
+}
+
+.axis-key span {
+  padding: 4px 6px;
+  background: #1b2325;
+  border: 1px solid #354042;
+  border-radius: 3px;
+}
+
+.range-switch {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 4px;
+  background: #20282a;
+  border-radius: 4px;
+}
+
+.range-switch button {
+  min-height: 38px;
+  color: #8f9999;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 750;
+}
+
+.range-switch button:hover,
+.range-switch button.is-active {
+  color: var(--paper);
+  background: #354043;
+  border-color: #4d5759;
+}
+
 .three-stage {
   position: relative;
   flex: 1;
@@ -1183,7 +1228,12 @@ input[type="range"] {
   }
 
   .scene-heading {
+    align-items: flex-start;
     padding: 15px 14px;
+  }
+
+  .axis-key {
+    max-width: 150px;
   }
 
   .three-stage {

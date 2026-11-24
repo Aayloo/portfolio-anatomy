@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Portfolio Anatomy is an interactive multi-asset portfolio diagnostic: allocation, risk contribution, factor exposure and stress in one continuous 3D model.">
+  <meta name="description" content="Portfolio Anatomy is an interactive 3D multi-asset market terrain: time, wealth and asset channels built from public ETF history.">
   <meta name="theme-color" content="#111719">
   <meta property="og:title" content="Portfolio Anatomy · Multi-Asset Diagnostic">
-  <meta property="og:description" content="Explore capital, risk, factor exposure and stress through one procedural 3D portfolio model.">
+  <meta property="og:description" content="Explore seven ETF markets through a three-dimensional time, return and asset-axis terrain.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://aayloo.github.io/portfolio-anatomy/">
   <meta property="og:image" content="https://aayloo.github.io/portfolio-anatomy/assets/img/preview.png">
@@ -42,18 +42,18 @@
   <main id="top">
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-copy">
-        <p class="eyebrow">MULTI-ASSET / RISK / ATTRIBUTION</p>
-        <h1 id="hero-title">The portfolio you see is not always the risk you own.</h1>
+        <p class="eyebrow">TIME × WEALTH × ASSET</p>
+        <h1 id="hero-title">Watch seven markets rise and fall through time.</h1>
         <p class="hero-lede">
-          Seven liquid asset sleeves, one portfolio outcome. Rotate the assembly,
-          switch from capital to risk, and stress the structure before deciding
-          what changed.
+          A three-dimensional market surface built from monthly ETF prices:
+          time runs along X, cumulative wealth along Y, and each asset occupies
+          its own Z channel. Rotate it, replay it and inspect where the path broke.
         </p>
       </div>
       <div class="hero-rule" aria-hidden="true"></div>
       <div class="hero-thesis">
         <span>Working thesis</span>
-        <p>Capital weights describe ownership. Risk contribution and common factors explain movement.</p>
+        <p>A portfolio is a set of price paths first. Allocation is what happens after those paths move.</p>
       </div>
     </section>
 
@@ -61,13 +61,13 @@
       <div class="workbench-top">
         <div>
           <p class="section-index">01 / PORTFOLIO WORKBENCH</p>
-          <h2 id="workbench-title">L1 multi-asset shadow portfolio</h2>
+          <h2 id="workbench-title">2020–2026 multi-asset market terrain</h2>
         </div>
         <div class="mode-tabs" role="tablist" aria-label="Portfolio view">
-          <button type="button" role="tab" aria-selected="true" data-view-mode="capital">Capital</button>
-          <button type="button" role="tab" aria-selected="false" data-view-mode="risk">Risk</button>
-          <button type="button" role="tab" aria-selected="false" data-view-mode="factor">Factor</button>
-          <button type="button" role="tab" aria-selected="false" data-view-mode="liquidity">Liquidity</button>
+          <button type="button" role="tab" aria-selected="true" data-view-mode="growth">Growth</button>
+          <button type="button" role="tab" aria-selected="false" data-view-mode="returns">Returns</button>
+          <button type="button" role="tab" aria-selected="false" data-view-mode="drawdown">Drawdown</button>
+          <button type="button" role="tab" aria-selected="false" data-view-mode="volatility">Volatility</button>
         </div>
       </div>
 
@@ -76,43 +76,35 @@
           <div class="control-block">
             <span class="control-label">Market scenario</span>
             <div class="scenario-list" role="group" aria-label="Stress scenario">
-              <button class="scenario-button is-active" type="button" data-scenario="base" aria-pressed="true">
-                <span>Current</span><small>No shock</small>
-              </button>
-              <button class="scenario-button" type="button" data-scenario="gfc" aria-pressed="false">
-                <span>2008</span><small>Financial crisis</small>
+              <button class="scenario-button is-active" type="button" data-scenario="all" aria-pressed="true">
+                <span>Full</span><small>2020–2026</small>
               </button>
               <button class="scenario-button" type="button" data-scenario="covid" aria-pressed="false">
-                <span>2020</span><small>Pandemic shock</small>
+                <span>2020</span><small>Pandemic crash</small>
               </button>
               <button class="scenario-button" type="button" data-scenario="rates" aria-pressed="false">
-                <span>2022</span><small>Rates shock</small>
+                <span>2022</span><small>Rate repricing</small>
+              </button>
+              <button class="scenario-button" type="button" data-scenario="recent" aria-pressed="false">
+                <span>Recent</span><small>Last 12 months</small>
               </button>
             </div>
           </div>
 
           <div class="control-block">
-            <label for="correlation-stress">
-              <span class="control-label">Correlation stress</span>
-              <strong id="correlation-value">1.00×</strong>
-            </label>
-            <input id="correlation-stress" type="range" min="1" max="1.8" value="1" step="0.05">
-            <p class="control-note">Amplifies the scenario loss as diversification weakens.</p>
-          </div>
-
-          <div class="control-block">
-            <span class="control-label">Portfolio action</span>
-            <div class="action-stack">
-              <button class="button button-primary" id="derisk-button" type="button">De-risk equity sleeves 20%</button>
-              <button class="button button-quiet" id="reset-button" type="button">Reset portfolio</button>
+            <span class="control-label">Time window</span>
+            <div class="range-switch" role="group" aria-label="Time window">
+              <button type="button" data-range="12" aria-pressed="false">1Y</button>
+              <button type="button" data-range="36" aria-pressed="false">3Y</button>
+              <button class="is-active" type="button" data-range="all" aria-pressed="true">Full</button>
             </div>
           </div>
 
           <div class="control-block">
-            <span class="control-label">Model controls</span>
+            <span class="control-label">Playback</span>
             <div class="action-stack">
-              <button class="button button-quiet" id="explode-button" type="button" aria-pressed="false">Explode assembly</button>
-              <button class="button button-quiet" id="isolate-button" type="button" aria-pressed="false">Isolate selected asset</button>
+              <button class="button button-primary" id="play-button" type="button">Play market history</button>
+              <button class="button button-quiet" id="reset-camera-button" type="button">Reset camera</button>
             </div>
           </div>
 
@@ -125,19 +117,21 @@
         <div class="scene-panel">
           <div class="scene-heading">
             <div>
-              <span id="view-kicker">CAPITAL WEIGHT</span>
-              <strong id="view-title">What the portfolio owns</strong>
+              <span id="view-kicker">Y / CUMULATIVE WEALTH</span>
+              <strong id="view-title">Indexed growth through time</strong>
             </div>
-            <button class="compare-toggle" id="compare-button" type="button" aria-pressed="false">
-              Compare policy
-            </button>
+            <div class="axis-key" aria-hidden="true">
+              <span>X · TIME</span>
+              <span>Y · WEALTH</span>
+              <span>Z · ASSET</span>
+            </div>
           </div>
           <div class="three-stage" id="three-stage">
-            <canvas id="portfolio-canvas" aria-label="Interactive 3D multi-asset portfolio model"></canvas>
+            <canvas id="portfolio-canvas" aria-label="Interactive 3D market chart with time on the X axis, cumulative wealth on the Y axis and assets on the Z axis"></canvas>
             <div class="asset-label-layer" id="asset-label-layer" aria-hidden="true"></div>
             <div class="webgl-fallback" id="webgl-fallback" hidden>
               <strong>3D view unavailable</strong>
-              <p>The allocation, risk and stress diagnostics remain available below.</p>
+              <p>The market history, attribution and risk diagnostics remain available below.</p>
             </div>
             <div class="scene-caption">
               <span>Drag to rotate</span>
@@ -156,25 +150,23 @@
             </div>
           </div>
           <dl class="metric-list">
-            <div><dt>Capital weight</dt><dd id="selected-weight">—</dd></div>
+            <div><dt>End wealth index</dt><dd id="selected-wealth">—</dd></div>
+            <div><dt>Latest monthly return</dt><dd id="selected-return-month">—</dd></div>
+            <div><dt>Maximum drawdown</dt><dd id="selected-drawdown">—</dd></div>
             <div><dt>Risk contribution</dt><dd id="selected-risk">—</dd></div>
-            <div><dt>Factor sensitivity</dt><dd id="selected-factor">—</dd></div>
-            <div><dt>Liquidity score</dt><dd id="selected-liquidity">—</dd></div>
             <div><dt>Annual return contribution</dt><dd id="selected-return">—</dd></div>
-            <div><dt>Scenario impact</dt><dd id="selected-stress">—</dd></div>
           </dl>
           <div class="inspector-note" id="inspector-note">
-            The largest capital sleeve can still be a smaller risk source than a more volatile or
-            correlated holding.
+            The Y position is cumulative wealth, not price. Every series starts at 100 in January 2020.
           </div>
         </aside>
       </div>
 
       <div class="kpi-strip" aria-live="polite">
         <article>
-          <span>Annual return</span>
-          <strong id="kpi-return">5.20%</strong>
-          <small>Historical simulation</small>
+          <span>2026 YTD portfolio</span>
+          <strong id="kpi-ytd">—</strong>
+          <small>Current-weight index</small>
         </article>
         <article>
           <span>Annual volatility</span>
@@ -187,9 +179,9 @@
           <small>June 2008–October 2026</small>
         </article>
         <article>
-          <span>Scenario loss</span>
-          <strong id="kpi-stress">0.00%</strong>
-          <small id="kpi-stress-note">No active shock</small>
+          <span>Selected window</span>
+          <strong id="kpi-window">—</strong>
+          <small id="kpi-window-note">Full history</small>
         </article>
       </div>
     </section>
@@ -198,11 +190,11 @@
       <div class="diagnostics-heading">
         <div>
           <p class="section-index">02 / DIAGNOSTICS</p>
-          <h2 id="diagnostics-title">Three questions, three different answers.</h2>
+          <h2 id="diagnostics-title">Four views, one price history.</h2>
         </div>
         <p>
-          Allocation asks where the money is. Risk asks what drives portfolio movement.
-          Stress asks what remains when the relationships change.
+          Time reveals the path. Returns reveal direction. Risk reveals concentration.
+          Attribution shows which asset actually carried the result.
         </p>
       </div>
 
@@ -245,29 +237,28 @@
       <div class="evidence-grid">
         <article>
           <span>Data</span>
-          <p>Public ETF adjusted closes translated to HKD without hedging. Raw vendor history is not redistributed.</p>
+          <p>Yahoo Finance monthly adjusted closes for eight public ETF proxies, normalized to 100 in January 2020.</p>
         </article>
         <article>
           <span>Risk</span>
-          <p>Variance contribution uses the trailing covariance matrix. Stress returns are illustrative historical mappings.</p>
+          <p>Growth, monthly return, drawdown and realized volatility are calculated from the downloaded monthly series.</p>
         </article>
         <article>
           <span>Decision</span>
-          <p>The equity de-risk control is an interaction example, not an investment recommendation or live trading rule.</p>
+          <p>The current-weight portfolio path is a research index, not an account or a recommendation.</p>
         </article>
       </div>
       <details class="method-drawer">
         <summary>Read method notes</summary>
         <div>
           <p>
-            Baseline metrics use the L1 TAA research series: 5.20% annual return,
-            7.64% annual volatility, 0.70 Sharpe ratio and −23.32% maximum
-            drawdown. Scenario losses are weighted asset moves multiplied by the
-            user-selected correlation-stress factor and are displayed for
-            structural comparison only.
+            The 3D chart uses 82 monthly observations from January 2020 through
+            October 2026. Cumulative wealth is indexed to 100. The Y axis is
+            independently scaled for each view, while the X axis preserves time
+            order and the Z axis preserves one channel per asset.
           </p>
           <p>
-            The 3D model encodes relationships, not probabilities. Text labels and
+            The 3D model encodes observed paths, not probabilities. Text labels and
             the diagnostics remain the authoritative source for values.
           </p>
         </div>
@@ -284,6 +275,7 @@
 
   <script src="assets/vendor/three.min.js"></script>
   <script src="data/portfolio-data.js"></script>
+  <script src="data/market-history.js"></script>
   <script src="assets/app.js"></script>
 </body>
 </html>

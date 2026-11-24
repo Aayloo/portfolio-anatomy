@@ -10,16 +10,17 @@ viewed separately?
 
 ## What it shows
 
-- current and policy asset weights;
-- variance contribution by sleeve;
-- annual return attribution by sleeve;
-- factor-sensitivity and liquidity views;
-- 2008, 2020 and 2022 historical stress mappings;
-- reversible de-risking, exploded-view, asset-isolation and scenario-snapshot controls.
+- a three-dimensional market chart with time on X, cumulative wealth on Y and
+  one asset channel on Z;
+- growth, monthly-return, drawdown and realized-volatility views;
+- 2020, 2022 and recent-market scenario windows;
+- a month-by-month playback head;
+- current and policy asset weights, variance contribution and return attribution;
+- keyboard-accessible asset selection and a scenario snapshot export.
 
-The central Three.js model is a structural metaphor. Module size, distance,
-connector intensity and stress displacement change by view. The authoritative
-numbers remain in the HTML diagnostics and labels.
+The central Three.js scene is a real data chart, not a decorative asset model.
+Eight ETF paths are drawn through a shared XYZ coordinate space. The
+authoritative numbers remain in the HTML diagnostics and labels.
 
 ## Run locally
 
@@ -39,10 +40,17 @@ node scripts/qa.mjs
 
 ## Data
 
-The study uses the existing public-ETF L1 shadow-portfolio outputs. Baseline
-metrics and variance contributions are frozen at 30 October 2026. Historical
-scenario impacts are illustrative mappings for structural comparison, not
-forecasts or investment advice.
+The page uses 82 monthly adjusted-close observations from January 2020 through
+October 2026 for SPY, VEA, EEM, IEF, LQD, GLD, DBC and BIL. The data builder
+downloads the public Yahoo Finance chart series and stores only the normalized
+wealth, monthly-return and drawdown fields used by the visualization.
+
+```bash
+python scripts/build_market_history.py
+```
+
+The current portfolio path applies the frozen L1 weights to each normalized
+series. It is a research index, not an account or investment recommendation.
 
 ## Technology
 
