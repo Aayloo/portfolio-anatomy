@@ -1,0 +1,10 @@
+{
+  "name": "portfolio-anatomy",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Interactive multi-asset portfolio diagnostic with a Three.js allocation model.",
+  "scripts": {
+    "qa": "node scripts/qa.mjs",
+    "serve": "python -m http.server 8000"
+  }
+}

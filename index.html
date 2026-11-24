@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Portfolio Anatomy is an interactive multi-asset portfolio diagnostic: allocation, risk contribution, factor exposure and stress in one continuous 3D model.">
+  <meta name="theme-color" content="#111719">
+  <title>Portfolio Anatomy · Multi-Asset Diagnostic</title>
+  <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#workbench">Skip to portfolio workbench</a>
+
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Portfolio Anatomy home">
+      <svg viewBox="0 0 36 36" aria-hidden="true">
+        <path d="M18 3 31 11v14L18 33 5 25V11Z" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <path d="M18 3v15m13-7-13 7M5 11l13 7v15" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <circle cx="18" cy="18" r="3" fill="currentColor"/>
+      </svg>
+      <span>Portfolio<br>Anatomy</span>
+    </a>
+    <div class="header-meta">
+      <span class="status-dot" aria-hidden="true"></span>
+      <span>Public ETF study</span>
+      <span>Data through 30 Oct 2026</span>
+    </div>
+    <nav aria-label="Primary navigation">
+      <a href="#workbench">Workbench</a>
+      <a href="#diagnostics">Diagnostics</a>
+      <button class="button button-quiet" id="export-button" type="button">Export snapshot</button>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow">MULTI-ASSET / RISK / ATTRIBUTION</p>
+        <h1 id="hero-title">The portfolio you see is not always the risk you own.</h1>
+        <p class="hero-lede">
+          Seven liquid asset sleeves, one portfolio outcome. Rotate the assembly,
+          switch from capital to risk, and stress the structure before deciding
+          what changed.
+        </p>
+      </div>
+      <div class="hero-rule" aria-hidden="true"></div>
+      <div class="hero-thesis">
+        <span>Working thesis</span>
+        <p>Capital weights describe ownership. Risk contribution and common factors explain movement.</p>
+      </div>
+    </section>
+
+    <section class="workbench" id="workbench" aria-labelledby="workbench-title">
+      <div class="workbench-top">
+        <div>
+          <p class="section-index">01 / PORTFOLIO WORKBENCH</p>
+          <h2 id="workbench-title">L1 multi-asset shadow portfolio</h2>
+        </div>
+        <div class="mode-tabs" role="tablist" aria-label="Portfolio view">
+          <button type="button" role="tab" aria-selected="true" data-view-mode="capital">Capital</button>
+          <button type="button" role="tab" aria-selected="false" data-view-mode="risk">Risk</button>
+          <button type="button" role="tab" aria-selected="false" data-view-mode="factor">Factor</button>
+          <button type="button" role="tab" aria-selected="false" data-view-mode="liquidity">Liquidity</button>
+        </div>
+      </div>
+
+      <div class="workspace-grid">
+        <aside class="control-panel" aria-label="Portfolio controls">
+          <div class="control-block">
+            <span class="control-label">Market scenario</span>
+            <div class="scenario-list" role="group" aria-label="Stress scenario">
+              <button class="scenario-button is-active" type="button" data-scenario="base" aria-pressed="true">
+                <span>Current</span><small>No shock</small>
+              </button>
+              <button class="scenario-button" type="button" data-scenario="gfc" aria-pressed="false">
+                <span>2008</span><small>Financial crisis</small>
+              </button>
+              <button class="scenario-button" type="button" data-scenario="covid" aria-pressed="false">
+                <span>2020</span><small>Pandemic shock</small>
+              </button>
+              <button class="scenario-button" type="button" data-scenario="rates" aria-pressed="false">
+                <span>2022</span><small>Rates shock</small>
+              </button>
+            </div>
+          </div>
+
+          <div class="control-block">
+            <label for="correlation-stress">
+              <span class="control-label">Correlation stress</span>
+              <strong id="correlation-value">1.00×</strong>
+            </label>
+            <input id="correlation-stress" type="range" min="1" max="1.8" value="1" step="0.05">
+            <p class="control-note">Amplifies the scenario loss as diversification weakens.</p>
+          </div>
+
+          <div class="control-block">
+            <span class="control-label">Portfolio action</span>
+            <div class="action-stack">
+              <button class="button button-primary" id="derisk-button" type="button">De-risk equity sleeves 20%</button>
+              <button class="button button-quiet" id="reset-button" type="button">Reset portfolio</button>
+            </div>
+          </div>
+
+          <div class="control-block asset-selector">
+            <span class="control-label">Inspect asset</span>
+            <div id="asset-selector" class="asset-list"></div>
+          </div>
+        </aside>
+
+        <div class="scene-panel">
+          <div class="scene-heading">
+            <div>
+              <span id="view-kicker">CAPITAL WEIGHT</span>
+              <strong id="view-title">What the portfolio owns</strong>
+            </div>
+            <button class="compare-toggle" id="compare-button" type="button" aria-pressed="false">
+              Compare policy
+            </button>
+          </div>
+          <div class="three-stage" id="three-stage">
+            <canvas id="portfolio-canvas" aria-label="Interactive 3D multi-asset portfolio model"></canvas>
+            <div class="asset-label-layer" id="asset-label-layer" aria-hidden="true"></div>
+            <div class="webgl-fallback" id="webgl-fallback" hidden>
+              <strong>3D view unavailable</strong>
+              <p>The allocation, risk and stress diagnostics remain available below.</p>
+            </div>
+            <div class="scene-caption">
+              <span>Drag to rotate</span>
+              <span>Select a module to inspect</span>
+            </div>
+          </div>
+        </div>
+
+        <aside class="inspector" aria-live="polite">
+          <p class="section-index">SELECTED MODULE</p>
+          <div class="inspector-title">
+            <span class="asset-swatch" id="selected-swatch"></span>
+            <div>
+              <h3 id="selected-name">US large-cap equity</h3>
+              <p id="selected-ticker">SPY / Equity</p>
+            </div>
+          </div>
+          <dl class="metric-list">
+            <div><dt>Capital weight</dt><dd id="selected-weight">—</dd></div>
+            <div><dt>Risk contribution</dt><dd id="selected-risk">—</dd></div>
+            <div><dt>Factor sensitivity</dt><dd id="selected-factor">—</dd></div>
+            <div><dt>Liquidity score</dt><dd id="selected-liquidity">—</dd></div>
+            <div><dt>Scenario impact</dt><dd id="selected-stress">—</dd></div>
+          </dl>
+          <div class="inspector-note" id="inspector-note">
+            The largest capital sleeve can still be a smaller risk source than a more volatile or
+            correlated holding.
+          </div>
+        </aside>
+      </div>
+
+      <div class="kpi-strip" aria-live="polite">
+        <article>
+          <span>Annual return</span>
+          <strong id="kpi-return">5.20%</strong>
+          <small>Historical simulation</small>
+        </article>
+        <article>
+          <span>Annual volatility</span>
+          <strong id="kpi-vol">7.64%</strong>
+          <small id="kpi-vol-note">Current weight estimate</small>
+        </article>
+        <article>
+          <span>Maximum drawdown</span>
+          <strong id="kpi-drawdown">−23.32%</strong>
+          <small>June 2008–October 2026</small>
+        </article>
+        <article>
+          <span>Scenario loss</span>
+          <strong id="kpi-stress">0.00%</strong>
+          <small id="kpi-stress-note">No active shock</small>
+        </article>
+      </div>
+    </section>
+
+    <section class="diagnostics" id="diagnostics" aria-labelledby="diagnostics-title">
+      <div class="diagnostics-heading">
+        <div>
+          <p class="section-index">02 / DIAGNOSTICS</p>
+          <h2 id="diagnostics-title">Three questions, three different answers.</h2>
+        </div>
+        <p>
+          Allocation asks where the money is. Risk asks what drives portfolio movement.
+          Stress asks what remains when the relationships change.
+        </p>
+      </div>
+
+      <div class="diagnostic-grid">
+        <article class="chart-card">
+          <header><span>Capital</span><strong>Weight by sleeve</strong></header>
+          <div id="weight-chart" class="bar-chart"></div>
+        </article>
+        <article class="chart-card">
+          <header><span>Risk</span><strong>Variance contribution</strong></header>
+          <div id="risk-chart" class="bar-chart"></div>
+        </article>
+        <article class="chart-card">
+          <header><span>Stress</span><strong id="stress-chart-title">Loss contribution</strong></header>
+          <div id="stress-chart" class="bar-chart"></div>
+        </article>
+      </div>
+
+      <div class="method-band">
+        <div>
+          <span>Decision controls</span>
+          <p>
+            The flagship risk source is equity. Three equity sleeves hold about
+            39% of capital but contribute about 61% of model-based variance.
+          </p>
+        </div>
+        <button class="button button-primary" type="button" data-scroll-to="workbench">Inspect the assembly</button>
+      </div>
+    </section>
+
+    <section class="evidence" aria-labelledby="evidence-title">
+      <div class="evidence-heading">
+        <p class="section-index">03 / METHOD & BOUNDARIES</p>
+        <h2 id="evidence-title">A precise exhibit, not a return forecast.</h2>
+      </div>
+      <div class="evidence-grid">
+        <article>
+          <span>Data</span>
+          <p>Public ETF adjusted closes translated to HKD without hedging. Raw vendor history is not redistributed.</p>
+        </article>
+        <article>
+          <span>Risk</span>
+          <p>Variance contribution uses the trailing covariance matrix. Stress returns are illustrative historical mappings.</p>
+        </article>
+        <article>
+          <span>Decision</span>
+          <p>The equity de-risk control is an interaction example, not an investment recommendation or live trading rule.</p>
+        </article>
+      </div>
+      <details class="method-drawer">
+        <summary>Read method notes</summary>
+        <div>
+          <p>
+            Baseline metrics use the L1 TAA research series: 5.20% annual return,
+            7.64% annual volatility, 0.70 Sharpe ratio and −23.32% maximum
+            drawdown. Scenario losses are weighted asset moves multiplied by the
+            user-selected correlation-stress factor and are displayed for
+            structural comparison only.
+          </p>
+          <p>
+            The 3D model encodes relationships, not probabilities. Text labels and
+            the diagnostics remain the authoritative source for values.
+          </p>
+        </div>
+      </details>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>Portfolio Anatomy · Aayloo</span>
+    <span>Research illustration only. Not investment advice.</span>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="assets/vendor/three.min.js"></script>
+  <script src="data/portfolio-data.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
