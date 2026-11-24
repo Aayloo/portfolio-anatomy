@@ -8,14 +8,14 @@ window.PORTFOLIO_DATA = {
     maxDrawdown: -0.2332,
   },
   assets: [
-    { id: "SPY", name: "US equity", group: "Equity", weight: 0.2011, risk: 0.2746, factor: 0.96, liquidity: 0.97, color: "#ef6a32" },
-    { id: "VEA", name: "Developed equity", group: "Equity", weight: 0.0995, risk: 0.167, factor: 0.82, liquidity: 0.94, color: "#da814f" },
-    { id: "EEM", name: "Emerging equity", group: "Equity", weight: 0.0936, risk: 0.1672, factor: 0.88, liquidity: 0.9, color: "#b7653f" },
-    { id: "IEF", name: "7–10Y Treasury", group: "Rates", weight: 0.2043, risk: 0.1309, factor: -0.34, liquidity: 0.99, color: "#5eb6ae" },
-    { id: "LQD", name: "Investment-grade credit", group: "Credit", weight: 0.1531, risk: 0.1302, factor: 0.42, liquidity: 0.91, color: "#7ba9a5" },
-    { id: "GLD", name: "Gold", group: "Real assets", weight: 0.0964, risk: 0.139, factor: -0.08, liquidity: 0.93, color: "#d7ad52" },
-    { id: "DBC", name: "Commodities", group: "Real assets", weight: 0.052, risk: 0.0019, factor: 0.24, liquidity: 0.86, color: "#b9955a" },
-    { id: "BIL", name: "Treasury bills", group: "Cash", weight: 0.1, risk: 0.0019, factor: 0.01, liquidity: 1, color: "#e1e2da" }
+    { id: "SPY", name: "US equity", group: "Equity", weight: 0.2011, risk: 0.2746, factor: 0.96, liquidity: 0.97, returnContribution: 0.0211, color: "#ef6a32" },
+    { id: "VEA", name: "Developed equity", group: "Equity", weight: 0.0995, risk: 0.167, factor: 0.82, liquidity: 0.94, returnContribution: 0.0047, color: "#da814f" },
+    { id: "EEM", name: "Emerging equity", group: "Equity", weight: 0.0936, risk: 0.1672, factor: 0.88, liquidity: 0.9, returnContribution: 0.004, color: "#b7653f" },
+    { id: "IEF", name: "7–10Y Treasury", group: "Rates", weight: 0.2043, risk: 0.1309, factor: -0.34, liquidity: 0.99, returnContribution: 0.0059, color: "#5eb6ae" },
+    { id: "LQD", name: "Investment-grade credit", group: "Credit", weight: 0.1531, risk: 0.1302, factor: 0.42, liquidity: 0.91, returnContribution: 0.0064, color: "#7ba9a5" },
+    { id: "GLD", name: "Gold", group: "Real assets", weight: 0.0964, risk: 0.139, factor: -0.08, liquidity: 0.93, returnContribution: 0.0094, color: "#d7ad52" },
+    { id: "DBC", name: "Commodities", group: "Real assets", weight: 0.052, risk: 0.0019, factor: 0.24, liquidity: 0.86, returnContribution: 0.0009, color: "#b9955a" },
+    { id: "BIL", name: "Treasury bills", group: "Cash", weight: 0.1, risk: 0.0019, factor: 0.01, liquidity: 1, returnContribution: 0.0017, color: "#e1e2da" }
   ],
   policyWeights: {
     SPY: 0.2,

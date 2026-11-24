@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Portfolio Anatomy is an interactive multi-asset portfolio diagnostic: allocation, risk contribution, factor exposure and stress in one continuous 3D model.">
   <meta name="theme-color" content="#111719">
+  <meta property="og:title" content="Portfolio Anatomy · Multi-Asset Diagnostic">
+  <meta property="og:description" content="Explore capital, risk, factor exposure and stress through one procedural 3D portfolio model.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://aayloo.github.io/portfolio-anatomy/">
+  <meta property="og:image" content="https://aayloo.github.io/portfolio-anatomy/assets/img/preview.png">
+  <meta name="twitter:card" content="summary_large_image">
   <title>Portfolio Anatomy · Multi-Asset Diagnostic</title>
   <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
   <link rel="stylesheet" href="assets/styles.css">
@@ -102,6 +108,14 @@
             </div>
           </div>
 
+          <div class="control-block">
+            <span class="control-label">Model controls</span>
+            <div class="action-stack">
+              <button class="button button-quiet" id="explode-button" type="button" aria-pressed="false">Explode assembly</button>
+              <button class="button button-quiet" id="isolate-button" type="button" aria-pressed="false">Isolate selected asset</button>
+            </div>
+          </div>
+
           <div class="control-block asset-selector">
             <span class="control-label">Inspect asset</span>
             <div id="asset-selector" class="asset-list"></div>
@@ -146,6 +160,7 @@
             <div><dt>Risk contribution</dt><dd id="selected-risk">—</dd></div>
             <div><dt>Factor sensitivity</dt><dd id="selected-factor">—</dd></div>
             <div><dt>Liquidity score</dt><dd id="selected-liquidity">—</dd></div>
+            <div><dt>Annual return contribution</dt><dd id="selected-return">—</dd></div>
             <div><dt>Scenario impact</dt><dd id="selected-stress">—</dd></div>
           </dl>
           <div class="inspector-note" id="inspector-note">
@@ -203,6 +218,10 @@
         <article class="chart-card">
           <header><span>Stress</span><strong id="stress-chart-title">Loss contribution</strong></header>
           <div id="stress-chart" class="bar-chart"></div>
+        </article>
+        <article class="chart-card">
+          <header><span>Attribution</span><strong>Annual return contribution</strong></header>
+          <div id="return-chart" class="bar-chart"></div>
         </article>
       </div>
 

@@ -2,6 +2,8 @@
 
 **An interactive multi-asset portfolio diagnostic.**
 
+[![Portfolio Anatomy preview](assets/img/preview.png)](https://aayloo.github.io/portfolio-anatomy/)
+
 Portfolio Anatomy is a public-data research exhibit built around one question:
 what does a portfolio actually own when capital, risk and factor exposure are
 viewed separately?
@@ -10,9 +12,10 @@ viewed separately?
 
 - current and policy asset weights;
 - variance contribution by sleeve;
+- annual return attribution by sleeve;
 - factor-sensitivity and liquidity views;
 - 2008, 2020 and 2022 historical stress mappings;
-- a reversible de-risking control and scenario snapshot export.
+- reversible de-risking, exploded-view, asset-isolation and scenario-snapshot controls.
 
 The central Three.js model is a structural metaphor. Module size, distance,
 connector intensity and stress displacement change by view. The authoritative

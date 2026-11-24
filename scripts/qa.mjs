@@ -196,7 +196,7 @@ try {
     if (metrics.h1Count !== 1) throw new Error(`${label}: expected one h1`);
     if (metrics.workbenchCount !== 4) throw new Error(`${label}: expected four main sections`);
     if (metrics.assetCount !== 8) throw new Error(`${label}: expected eight asset controls`);
-    if (metrics.barRows !== 24) throw new Error(`${label}: expected 24 diagnostic bars, found ${metrics.barRows}`);
+    if (metrics.barRows !== 32) throw new Error(`${label}: expected 32 diagnostic bars, found ${metrics.barRows}`);
     if (metrics.brokenImages) throw new Error(`${label}: found ${metrics.brokenImages} broken images`);
     if (metrics.hiddenMetrics) throw new Error(`${label}: found ${metrics.hiddenMetrics} empty inspector metrics`);
     if (metrics.canvasWidth < (viewport.mobile ? 300 : 500) || metrics.canvasHeight < 400) {
@@ -215,6 +215,8 @@ try {
           document.querySelector('[data-scenario="rates"]').click();
           document.querySelector('[data-asset-id="VEA"]').click();
           document.querySelector("#derisk-button").click();
+          document.querySelector("#explode-button").click();
+          document.querySelector("#isolate-button").click();
           document.querySelector("#compare-button").click();
           await new Promise((resolve) => setTimeout(resolve, 250));
           return {
@@ -222,8 +224,11 @@ try {
             selected: document.querySelector("#selected-name").textContent,
             stress: document.querySelector("#kpi-stress").textContent,
             deRisk: document.querySelector("#derisk-button").textContent,
+            explode: document.querySelector("#explode-button").getAttribute("aria-pressed"),
+            isolate: document.querySelector("#isolate-button").getAttribute("aria-pressed"),
             compare: document.querySelector("#compare-button").getAttribute("aria-pressed"),
-            weight: document.querySelector('[data-asset-id="VEA"] strong').textContent
+            weight: document.querySelector('[data-asset-id="VEA"] strong').textContent,
+            returnContribution: document.querySelector("#selected-return").textContent
           };
         })()`,
       });
@@ -232,8 +237,13 @@ try {
       if (!/developed/i.test(value.selected)) throw new Error(`Asset selection did not update: ${JSON.stringify(value)}`);
       if (!/^[−-]/.test(value.stress)) throw new Error(`Stress loss did not update: ${JSON.stringify(value)}`);
       if (!/restore/i.test(value.deRisk)) throw new Error(`De-risk control did not update: ${JSON.stringify(value)}`);
+      if (value.explode !== "true") throw new Error(`Exploded view did not activate: ${JSON.stringify(value)}`);
+      if (value.isolate !== "true") throw new Error(`Isolation mode did not activate: ${JSON.stringify(value)}`);
       if (value.compare !== "true") throw new Error(`Compare state did not activate: ${JSON.stringify(value)}`);
       if (value.weight === "10.0%") throw new Error(`De-risk did not change the selected weight: ${JSON.stringify(value)}`);
+      if (!/^[+−-]/.test(value.returnContribution)) {
+        throw new Error(`Return attribution did not update: ${JSON.stringify(value)}`);
+      }
     }
 
     const screenshot = await cdp.send("Page.captureScreenshot", {

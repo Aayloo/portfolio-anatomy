@@ -12,6 +12,8 @@
     deRisk: false,
     selected: "SPY",
     compare: false,
+    exploded: false,
+    isolate: false,
   };
 
   const modeCopy = {
@@ -52,12 +54,15 @@
     selectedRisk: document.querySelector("#selected-risk"),
     selectedFactor: document.querySelector("#selected-factor"),
     selectedLiquidity: document.querySelector("#selected-liquidity"),
+    selectedReturn: document.querySelector("#selected-return"),
     selectedStress: document.querySelector("#selected-stress"),
     inspectorNote: document.querySelector("#inspector-note"),
     correlation: document.querySelector("#correlation-stress"),
     correlationValue: document.querySelector("#correlation-value"),
     compare: document.querySelector("#compare-button"),
     derisk: document.querySelector("#derisk-button"),
+    explode: document.querySelector("#explode-button"),
+    isolate: document.querySelector("#isolate-button"),
     reset: document.querySelector("#reset-button"),
     export: document.querySelector("#export-button"),
     toast: document.querySelector("#toast"),
@@ -70,6 +75,7 @@
     weightChart: document.querySelector("#weight-chart"),
     riskChart: document.querySelector("#risk-chart"),
     stressChart: document.querySelector("#stress-chart"),
+    returnChart: document.querySelector("#return-chart"),
     stressChartTitle: document.querySelector("#stress-chart-title"),
   };
 
@@ -142,6 +148,14 @@
 
   function renderSelectors() {
     const weights = getWeights();
+    const labelValues = Object.fromEntries(
+      portfolio.assets.map((asset) => {
+        if (state.mode === "risk") return [asset.id, signedPercent(asset.risk)];
+        if (state.mode === "factor") return [asset.id, asset.factor.toFixed(2)];
+        if (state.mode === "liquidity") return [asset.id, String(Math.round(asset.liquidity * 100))];
+        return [asset.id, percent(weights[asset.id])];
+      }),
+    );
     els.selector.innerHTML = portfolio.assets
       .map(
         (asset) =>
@@ -157,7 +171,7 @@
         (asset) =>
           `<button type="button" tabindex="-1" aria-hidden="true" data-label-id="${asset.id}"
             style="--asset-color:${asset.color}" class="${asset.id === state.selected ? "is-selected" : ""}">
-            ${asset.id}
+            <strong>${asset.id}</strong><span>${labelValues[asset.id]}</span>
           </button>`,
       )
       .join("");
@@ -177,6 +191,7 @@
     els.selectedRisk.textContent = signedPercent(asset.risk);
     els.selectedFactor.textContent = asset.factor.toFixed(2);
     els.selectedLiquidity.textContent = `${Math.round(asset.liquidity * 100)} / 100`;
+    els.selectedReturn.textContent = signedPercent(asset.returnContribution);
     els.selectedStress.textContent =
       state.scenario === "base" ? "No active shock" : signedPercent(snapshot.stressContributions[asset.id]);
     els.inspectorNote.textContent =
@@ -212,6 +227,11 @@
       digits: 1,
     });
     renderBars(els.stressChart, snapshot.stressContributions, { signed: true, stress: true, digits: 1 });
+    renderBars(
+      els.returnChart,
+      Object.fromEntries(portfolio.assets.map((asset) => [asset.id, asset.returnContribution])),
+      { signed: true, digits: 1 },
+    );
     els.stressChartTitle.textContent =
       state.scenario === "base" ? "No active scenario" : portfolio.scenarios[state.scenario].label;
   }
@@ -228,6 +248,10 @@
     els.correlationValue.textContent = `${state.correlation.toFixed(2)}×`;
     els.compare.setAttribute("aria-pressed", String(state.compare));
     els.derisk.textContent = state.deRisk ? "Restore equity sleeves" : "De-risk equity sleeves 20%";
+    els.explode.textContent = state.exploded ? "Collapse assembly" : "Explode assembly";
+    els.explode.setAttribute("aria-pressed", String(state.exploded));
+    els.isolate.textContent = state.isolate ? "Show all assets" : "Isolate selected asset";
+    els.isolate.setAttribute("aria-pressed", String(state.isolate));
   }
 
   function syncUI() {
@@ -300,6 +324,16 @@
     showToast(state.deRisk ? "Equity sleeves reduced by 20%; proceeds assigned to Treasury bills." : "Portfolio restored.");
   });
 
+  els.explode.addEventListener("click", () => {
+    state.exploded = !state.exploded;
+    syncUI();
+  });
+
+  els.isolate.addEventListener("click", () => {
+    state.isolate = !state.isolate;
+    syncUI();
+  });
+
   els.reset.addEventListener("click", () => {
     Object.assign(state, {
       mode: "capital",
@@ -308,6 +342,8 @@
       deRisk: false,
       selected: "SPY",
       compare: false,
+      exploded: false,
+      isolate: false,
     });
     els.correlation.value = "1";
     syncUI();
@@ -330,6 +366,8 @@
       correlationStress: state.correlation,
       deRiskApplied: state.deRisk,
       selectedAsset: state.selected,
+      explodedView: state.exploded,
+      isolatedAssetView: state.isolate,
       weights: snapshot.weights,
       varianceContribution: Object.fromEntries(portfolio.assets.map((asset) => [asset.id, asset.risk])),
       scenarioContribution: snapshot.stressContributions,
@@ -493,6 +531,7 @@
           targetScale: new THREE.Vector3(1, 1, 1),
           targetColor: new THREE.Color(asset.color),
           targetConnectorOpacity: 0.24,
+          targetOpacity: 1,
         };
       });
 
@@ -607,6 +646,7 @@
 
       const shock = state.scenario === "base" ? 0 : Math.max(0, -scenarioContribution);
       radius += shock * 8.5;
+      if (state.exploded) radius *= 1.42;
       height += shock * -2.8;
       module.targetPosition.set(Math.cos(angle) * radius, 0.25 + height, Math.sin(angle) * radius);
       module.targetScale.set(scaleX, scaleY, scaleZ);
@@ -615,6 +655,8 @@
       );
       module.targetConnectorOpacity =
         state.mode === "factor" ? 0.15 + normalizedFactor * 0.7 : state.mode === "risk" ? 0.12 + normalizedRisk * 0.45 : 0.2;
+      module.targetOpacity = state.isolate && asset.id !== state.selected ? 0.2 : 1;
+      module.mesh.material.transparent = module.targetOpacity < 1;
 
       module.ghost.visible = state.compare;
       if (state.compare) {
@@ -646,6 +688,7 @@
       module.mesh.position.lerp(module.targetPosition, speed);
       module.mesh.scale.lerp(module.targetScale, speed);
       module.mesh.material.color.lerp(module.targetColor, speed);
+      module.mesh.material.opacity += (module.targetOpacity - module.mesh.material.opacity) * speed;
       module.mesh.material.emissiveIntensity +=
         ((module.asset.id === state.selected ? 0.24 : 0.035) - module.mesh.material.emissiveIntensity) * speed;
       module.connector.material.opacity +=
