@@ -1,6 +1,7 @@
 import { spawn } from "node:child_process";
 import fs from "node:fs";
 import http from "node:http";
+import https from "node:https";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -9,7 +10,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const host = "127.0.0.1";
 const serverPort = 8766;
 const debugPort = 9224;
-const url = `http://${host}:${serverPort}/`;
+const externalUrl = process.env.QA_URL || "";
+const url = externalUrl || `http://${host}:${serverPort}/`;
 const outputDir = path.join(root, "tmp", "qa");
 fs.mkdirSync(outputDir, { recursive: true });
 
@@ -27,7 +29,8 @@ const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, mil
 
 function httpGet(targetUrl) {
   return new Promise((resolve, reject) => {
-    const request = http.get(targetUrl, (response) => {
+    const client = targetUrl.startsWith("https:") ? https : http;
+    const request = client.get(targetUrl, (response) => {
       let body = "";
       response.setEncoding("utf8");
       response.on("data", (chunk) => {
@@ -92,11 +95,13 @@ class CdpClient {
   }
 }
 
-const server = spawn("python", ["-m", "http.server", String(serverPort), "--bind", host], {
-  cwd: root,
-  stdio: "ignore",
-  windowsHide: true,
-});
+const server = externalUrl
+  ? null
+  : spawn("python", ["-m", "http.server", String(serverPort), "--bind", host], {
+      cwd: root,
+      stdio: "ignore",
+      windowsHide: true,
+    });
 
 const profileDir = fs.mkdtempSync(path.join(os.tmpdir(), "portfolio-anatomy-chrome-"));
 const chrome = spawn(
@@ -106,6 +111,8 @@ const chrome = spawn(
     "--no-sandbox",
     "--disable-gpu",
     "--enable-unsafe-swiftshader",
+    "--proxy-server=direct://",
+    "--proxy-bypass-list=*",
     "--disable-extensions",
     "--disable-background-networking",
     "--no-first-run",
@@ -261,5 +268,5 @@ try {
 } finally {
   socket?.close();
   chrome.kill();
-  server.kill();
+  server?.kill();
 }
